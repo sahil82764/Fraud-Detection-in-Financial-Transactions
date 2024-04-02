@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from typing import List
 
 projectName =  "fraudTransaction-predictor"
@@ -15,7 +15,7 @@ def get_requirements()->List[str]:
     Returns: This function is going to return a list which contain name of libraries mentioned in requirements.txt file.
     """
     with open(requirementFile) as requirement_file:
-        return requirement_file.readlines()
+        return requirement_file.readlines().remove('-e .')
     
 
 
@@ -24,7 +24,7 @@ setup(
     version = versionInstance,
     author = authorName,
     description = projectDescription,
-    packages = packageName,
+    packages = find_packages(),
     install_requires = get_requirements()
 
 )

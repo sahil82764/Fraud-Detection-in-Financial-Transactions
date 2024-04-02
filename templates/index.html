@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediction</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>{{ mode.capitalize() }} Prediction</h1>
+    {% if mode == 'batch' %}
+        <form action="{{ url_for('batch_prediction_result') }}" method="post" enctype="multipart/form-data">
+            <label for="file_path">Enter CSV File Path:</label>
+            <input type="text" id="file_path" name="file_path">
+            <input type="submit" value="Submit">
+        </form>
+    {% elif mode == 'realtime' %}
+        <form action="{{ url_for('realtime_prediction_result') }}" method="post">
+            <!-- Add input fields for real-time prediction -->
+            <input type="submit" value="Submit">
+        </form>
+    {% endif %}
+</body>
+</html>

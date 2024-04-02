@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Result</h1>
+    {% if file_path %}
+        <p>Absolute path of prediction output file: {{ file_path }}</p>
+    {% endif %}
+    {% if prediction %}
+        <h1>Prediction Result</h1>
+        <p>Output: {{ prediction }}</p>
+    {% endif %}
+</body>
+</html>

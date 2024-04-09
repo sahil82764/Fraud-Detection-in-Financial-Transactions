@@ -1,0 +1,37 @@
+columns:
+  step: integer
+  type: category
+  amount: float
+  nameOrig: category
+  oldbalanceOrg: float
+  nameDest: category
+  oldbalanceDest: float
+  newbalanceDest: float
+  isFraud: integer
+  isFlaggedFraud: integer
+
+numerical_columns:
+  - step
+  - amount
+  - oldbalanceOrg
+  - oldbalanceDest
+  - newbalanceDest
+  - isFraud
+  - isFlaggedFraud
+
+categorical_columns:
+  - type
+  - nameOrig
+  - nameDest
+
+target_column:
+  - isFraud
+  - isFlaggedFraud
+
+domain_value:
+  type:
+    - CASH_IN
+    - CASH_OUT
+    - DEBIT
+    - PAYMENT
+    - TRANSFER

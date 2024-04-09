@@ -1,9 +1,9 @@
 training_pipeline_config:
-  pipeline_name: fraudDetection
+  pipeline_name: fraudDetectionPipeline
   artifact_dir: artifact
 
 data_ingestion_config:
-  dataset_download_path: Data
+  dataset_download_path: C:\Users\Sahil Khan\OneDrive\Desktop\AI GRAD CERT\aidi github\AIDI 2005 - Capstone Project II\Fraud-Detection-in-Financial-Transactions\Data
   raw_data_dir: raw_data
   ingested_dir: ingested_data
   ingested_train_dir: train

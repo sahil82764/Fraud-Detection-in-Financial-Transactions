@@ -64,7 +64,7 @@ class DataValidation:
 
     def validate_dataset_schema(self) -> bool:
         try:
-            validation_status = False
+            validation_status = True
 
             training_file = self.data_ingestion_artifact.train_file_path
             testing_file = self.data_ingestion_artifact.test_file_path
@@ -77,27 +77,24 @@ class DataValidation:
             required_columns = ["step", "type", "amount", "nameOrig", "oldbalanceOrg", "newbalanceOrig", "nameDest", "oldbalanceDest", "newbalanceDest", "isFraud", "isFlaggedFraud"]
             missing_columns_train = set(required_columns) - set(training_data.columns)
             missing_columns_test = set(required_columns) - set(testing_data.columns)
-            if missing_columns_train:
-                raise ValueError(f"Missing required columns: {', '.join(missing_columns_train)}")
-            if missing_columns_test:
-                raise ValueError(f"Missing required columns: {', '.join(missing_columns_test)}")
+            if missing_columns_train or missing_columns_test:
+                validation_status = False
+                raise ValueError(f"Missing required columns in Data: {', '.join(missing_columns_train, missing_columns_test)}")
 
             # Example: Check if numeric columns have valid values
-            numeric_columns = ["column2", "column3"]
+            numeric_columns = ["step", "amount", "oldbalanceOrg", "newbalanceOrig", "oldbalanceDest", "newbalanceDest", "isFraud", "isFlaggedFraud"]
             for col in numeric_columns:
-                if not pd.to_numeric(df[col], errors="coerce").notna().all():
-                    raise ValueError(f"Invalid values in column {col}")
+                if not pd.to_numeric(training_data[col], errors="coerce").notna().all() or pd.to_numeric(testing_data[col], errors="coerce").notna().all():
+                    validation_status = False
+                    raise ValueError(f"Data Validation Fails")
+                
+            # Check if target columns contain only 0 and 1
+            target_columns = ["isFraud", "isFlaggedFraud"]
+            for col in target_columns:
+                if not set(training_data[col]) <= {0, 1} or set(testing_data[col]) <= {0, 1}:
+                    validation_status = False
+                    raise ValueError(f"Data Validation Fails as Target Column Must Contain Only 0 and 1.")
 
-            # Add more validation checks as needed
-
-            # If all checks pass, return True
-            return True
-
-
-
-
-
-            validation_status = True
             return validation_status
 
         except Exception as e:
@@ -150,7 +147,8 @@ class DataValidation:
     def is_data_drift_found(self) -> bool:
         try:
 
-            report = self.get_and_save_data_drift_report()
+            # report = self.get_and_save_data_drift_report()
+            self.get_and_save_data_drift_report()
             self.save_data_drift_report_page()
             return True
 

@@ -1,9 +1,9 @@
 from cgi import test
 from sklearn import preprocessing
-from housing.exception import housingException
-from housing.logger import logging
-from housing.entity.config_entity import DataTransformationConfig
-from housing.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
+from fraudTransaction.exception import fraudTransactionException
+from fraudTransaction.logger import logging
+from fraudTransaction.entity.config_entity import DataTransformationConfig
+from fraudTransaction.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
 import sys, os
 import numpy as np
 import pandas as pd
@@ -12,8 +12,8 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from housing.constant import *
-from housing.util.util import read_yaml_file, save_object, save_numpy_array_data, load_data
+from fraudTransaction.constant import *
+from fraudTransaction.util.util import read_yaml_file, save_object, save_numpy_array_data, load_data
 
 #   longitude: float
 #   latitude: float
@@ -28,66 +28,17 @@ from housing.util.util import read_yaml_file, save_object, save_numpy_array_data
 #   income_cat: float
 
 
-class FeatureGenerator(BaseEstimator, TransformerMixin):
-
-    def __init__(self, add_bedrooms_per_room=True,
-                    total_rooms_ix=3,
-                    population_ix=5,
-                    households_ix=6,
-                    total_bedrooms_ix=4, 
-                    columns=None):
-        """
-        FeatureGenerator Initialization
-        add_bedrooms_per_room: bool
-        total_rooms_ix: int index number of total rooms columns
-        population_ix: int index number of total population columns
-        households_ix: int index number of  households columns
-        total_bedrooms_ix: int index number of bedrooms columns
-        """
-
-        try:
-
-            self.columns = columns
-
-            if self.columns is not None:
-                total_rooms_ix = self.columns.index(COLUMN_TOTAL_ROOMS)
-                population_ix = self.columns.index(COLUMN_POPULATION)
-                households_ix = self.columns.index(COLUMN_HOUSEHOLDS)
-                total_bedrooms_ix = self.columns.index(COLUMN_TOTAL_BEDROOM)
-
-            
-            self.add_bedrooms_per_room = add_bedrooms_per_room
-            self.total_bedrooms_ix = total_bedrooms_ix
-            self.total_rooms_ix = total_rooms_ix
-            self.population_ix = population_ix
-            self.households_ix = households_ix
-
-        except Exception as e:
-            raise housingException(e,sys) from e
-
-    def fit(self, X, y=None):
-        return self
-
-
-    def transform(self, X, y=None):
-        try:
-
-            rooms_per_household = X[:, self.total_rooms_ix]/X[:, self.households_ix]
-
-            population_per_household = X[:, self.population_ix]/X[:, self.households_ix]
-
-            if self.add_bedrooms_per_room:
-                bedrooms_per_room = X[:, self.total_bedrooms_ix]/X[:, self.total_rooms_ix]
-                generated_feature = np.c_[X, rooms_per_household, population_per_household, bedrooms_per_room]
-
-            else:
-                generated_feature = np.c_[X, rooms_per_household, population_per_household]
-
-            return generated_feature
-
-        except Exception as e:
-            raise housingException(e,sys) from e
-
+# step           : int64  
+# type           : object 
+# amount         : float64
+# nameOrig       : object 
+# oldbalanceOrg  : float64
+# newbalanceOrig : float64
+# nameDest       : object 
+# oldbalanceDest : float64
+# newbalanceDest : float64
+# isFraud        : int64  
+# isFlaggedFraud : int64  
 
 class DataTransformation:
 
@@ -103,7 +54,7 @@ class DataTransformation:
             self.data_validation_artifact = data_validation_artifact
 
         except Exception as e:
-            raise housingException(e,sys) from e
+            raise fraudTransactionException(e,sys) from e
 
 
     def get_data_transformer_object(self) -> ColumnTransformer:
@@ -118,10 +69,6 @@ class DataTransformation:
 
             num_pipeline = Pipeline(steps = [
                 ('impute', SimpleImputer(strategy="median")),
-                ('feature_generator', FeatureGenerator(
-                    add_bedrooms_per_room=self.data_transformation_config.add_bedrooms_per_room,
-                    columns=numerical_columns
-                )),
                 ('scaler', StandardScaler())
             ])
 
@@ -142,7 +89,7 @@ class DataTransformation:
             return preprocessing
 
         except Exception as e:
-            raise housingException(e,sys) from e
+            raise fraudTransactionException(e,sys) from e
 
 
     def initiate_data_transformation(self) -> DataTransformationArtifact:
@@ -210,4 +157,4 @@ class DataTransformation:
             return data_transformation_artifact
 
         except Exception as e:
-            raise housingException(e,sys) from e
+            raise fraudTransactionException(e,sys) from e

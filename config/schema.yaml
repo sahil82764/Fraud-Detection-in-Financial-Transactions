@@ -26,7 +26,6 @@ categorical_columns:
 
 target_column:
   - isFraud
-  - isFlaggedFraud
 
 domain_value:
   type:

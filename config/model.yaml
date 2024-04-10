@@ -35,3 +35,33 @@ model_selection:
       - 5
       - 10
       - None
+  module_2:
+    class: GradientBoostingClassifier
+    module: sklearn.ensemble
+    params:
+      n_estimators: 100
+      max_depth: 3
+    search_param_grid:
+      n_estimators:
+      - 50
+      - 100
+      - 150
+      max_depth:
+      - 3
+      - 5
+      - None
+  module_3:
+    class: SVC
+    module: sklearn.svm
+    params:
+      kernel: 'rbf'
+      C: 1.0
+    search_param_grid:
+      kernel:
+      - 'linear'
+      - 'poly'
+      - 'rbf'
+      C:
+      - 0.1
+      - 1.0
+      - 10.0
